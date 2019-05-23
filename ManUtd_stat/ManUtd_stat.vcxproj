@@ -131,7 +131,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ENEMY.cpp" />
+    <ClCompile Include="GREEN.cpp" />
     <ClCompile Include="ManUtd.cpp" />
+    <ClCompile Include="PLAYER.cpp" />
+    <ClCompile Include="YELLOW.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ENEMY.h" />
+    <ClInclude Include="FORT.h" />
+    <ClInclude Include="GREEN.h" />
+    <ClInclude Include="JADRO.h" />
+    <ClInclude Include="MAP.h" />
+    <ClInclude Include="PLAYER.h" />
+    <ClInclude Include="YELLOW.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
