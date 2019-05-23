@@ -6,7 +6,6 @@
 
 
 using namespace sf;
-bool isExit = 0;
 void menu(RenderWindow & window, bool &exit)
 {
 	Texture menuTexture1, menuTexture3, aboutTexture, menuBackground;
@@ -57,11 +56,17 @@ void menu(RenderWindow & window, bool &exit)
 	}
 }
 
-float offsetX = 0, offsetY = 1600;
-const int H = 40;
-const int W = 150;
-int ZD = 0;
-String TileMap[H] = {
+
+class MAP
+{
+public:
+	float offsetX;
+	float offsetY;
+	int H ;
+	int W ;
+	int ZD;
+	bool isExit;
+	String TileMap[40] = {
 "Z2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222X",
 "1                                                                                                                                                    3",
 "1                                                                                                                                                    3",
@@ -102,7 +107,20 @@ String TileMap[H] = {
 "1                                                                                                                                                    3",
 "1                                                                                                                                                    3",
 "zPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPx",
+	};
+	MAP()
+	{
+		offsetX = 0;
+		offsetY = 1600;
+		H = 40;
+		W = 150;
+		ZD = 0;
+		isExit = 0;
+	}
+
+
 };
+
 class PLAYER {
 
 private:
@@ -113,6 +131,7 @@ private:
 	float currentFrame;
 	Texture BF;
 	Texture BF1;
+
 public:
 	int nap;
 	PLAYER(Texture &image, Texture &image2)
@@ -178,12 +197,12 @@ public:
 	{
 		currentFrame = a;
 	}
-	void update(float time)
+	void update(float time, MAP &m)
 	{
 		rect.left += dx * time;
-		Collision(0);
+		Collision(0, m);
 		rect.top += dy * time;
-		Collision(1);
+		Collision(1, m);
 		currentFrame += time * 0.005;
 		if (dy > 0)
 		{
@@ -277,21 +296,21 @@ public:
 			}
 			nap = 2;
 		}
-		sprite.setPosition(rect.left - offsetX, rect.top - offsetY);
+		sprite.setPosition(rect.left - m.offsetX, rect.top - m.offsetY);
 		dx = 0;
 		dy = 0;
 	}
-	void Collision(int num)
+	void Collision(int num, MAP &m)
 	{
 
 		for (int i = rect.top / 64; i < (rect.top + rect.height) / 64; i++)
 			for (int j = rect.left / 64; j < (rect.left + rect.width) / 64; j++)
 			{
-				if ((TileMap[i][j] == 'P') || (TileMap[i][j] == '1') || (TileMap[i][j] == '0') || (TileMap[i][j] == '3') || (TileMap[i][j] == '2') ||
-					(TileMap[i][j] == 'Q') || (TileMap[i][j] == 'W') || (TileMap[i][j] == 'E') || (TileMap[i][j] == 'R') ||
-					(TileMap[i][j] == 'q') || (TileMap[i][j] == 'w') || (TileMap[i][j] == 'e') || (TileMap[i][j] == 'r') ||
-					(TileMap[i][j] == 'A') || (TileMap[i][j] == 'S') || (TileMap[i][j] == 'D') || (TileMap[i][j] == 'F') ||
-					(TileMap[i][j] == 'a') || (TileMap[i][j] == 's') || (TileMap[i][j] == 'd') || (TileMap[i][j] == 'f')
+				if ((m.TileMap[i][j] == 'P') || (m.TileMap[i][j] == '1') || (m.TileMap[i][j] == '0') || (m.TileMap[i][j] == '3') || (m.TileMap[i][j] == '2') ||
+					(m.TileMap[i][j] == 'Q') || (m.TileMap[i][j] == 'W') || (m.TileMap[i][j] == 'E') || (m.TileMap[i][j] == 'R') ||
+					(m.TileMap[i][j] == 'q') || (m.TileMap[i][j] == 'w') || (m.TileMap[i][j] == 'e') || (m.TileMap[i][j] == 'r') ||
+					(m.TileMap[i][j] == 'A') || (m.TileMap[i][j] == 'S') || (m.TileMap[i][j] == 'D') || (m.TileMap[i][j] == 'F') ||
+					(m.TileMap[i][j] == 'a') || (m.TileMap[i][j] == 's') || (m.TileMap[i][j] == 'd') || (m.TileMap[i][j] == 'f')
 					)
 				{
 					if (dy > 0 && num == 1)
@@ -343,9 +362,9 @@ public:
 						}
 					}
 				}
-				if (TileMap[i][j] == 'M')
+				if (m.TileMap[i][j] == 'M')
 				{
-					ZD = 1;
+					m.ZD = 1;
 				}
 			}
 	}
@@ -426,15 +445,15 @@ public:
 		T1 = image1;
 		T2 = image2;
 	}
-	void Collision()
+	void Collision(MAP &m)
 	{
 		for (int i = rect.top / 64; i < (rect.top + rect.height) / 64; i++)
 			for (int j = rect.left / 64; j < (rect.left + rect.width) / 64; j++)
-				if ((TileMap[i][j] == 'P') || (TileMap[i][j] == '1') || (TileMap[i][j] == '0') || (TileMap[i][j] == '3') || (TileMap[i][j] == '2') ||
-					(TileMap[i][j] == 'Q') || (TileMap[i][j] == 'W') || (TileMap[i][j] == 'E') || (TileMap[i][j] == 'R') ||
-					(TileMap[i][j] == 'q') || (TileMap[i][j] == 'w') || (TileMap[i][j] == 'e') || (TileMap[i][j] == 'r') ||
-					(TileMap[i][j] == 'A') || (TileMap[i][j] == 'S') || (TileMap[i][j] == 'D') || (TileMap[i][j] == 'F') ||
-					(TileMap[i][j] == 'a') || (TileMap[i][j] == 's') || (TileMap[i][j] == 'd') || (TileMap[i][j] == 'f')
+				if ((m.TileMap[i][j] == 'P') || (m.TileMap[i][j] == '1') || (m.TileMap[i][j] == '0') || (m.TileMap[i][j] == '3') || (m.TileMap[i][j] == '2') ||
+					(m.TileMap[i][j] == 'Q') || (m.TileMap[i][j] == 'W') || (m.TileMap[i][j] == 'E') || (m.TileMap[i][j] == 'R') ||
+					(m.TileMap[i][j] == 'q') || (m.TileMap[i][j] == 'w') || (m.TileMap[i][j] == 'e') || (m.TileMap[i][j] == 'r') ||
+					(m.TileMap[i][j] == 'A') || (m.TileMap[i][j] == 'S') || (m.TileMap[i][j] == 'D') || (m.TileMap[i][j] == 'F') ||
+					(m.TileMap[i][j] == 'a') || (m.TileMap[i][j] == 's') || (m.TileMap[i][j] == 'd') || (m.TileMap[i][j] == 'f')
 					)
 				{
 					if (dx > 0)
@@ -461,11 +480,11 @@ public:
 class GREEN : public ENEMY
 {
 public:
-	void update(float time)
+	void update(float time, MAP &m)
 	{
 		rect.left += dx * time;
 		rect.top += dy * time;
-		Collision();
+		Collision(m);
 		if (dy != 0 || dx != 0)
 		{
 			if (dy < 0)
@@ -569,17 +588,17 @@ public:
 			}
 
 		}
-		sprite.setPosition(rect.left - offsetX, rect.top - offsetY);
+		sprite.setPosition(rect.left - m.offsetX, rect.top - m.offsetY);
 	}
 };
 class YELLOW : public ENEMY
 {
 public:
-	void update(float time)
+	void update(float time, MAP &m)
 	{
 		rect.left += dx * time;
 		rect.top += dy * time;
-		Collision();
+		Collision(m);
 		if (dy != 0 || dx != 0)
 		{
 			if (dy < 0)
@@ -683,7 +702,7 @@ public:
 			}
 
 		}
-		sprite.setPosition(rect.left - offsetX, rect.top - offsetY);
+		sprite.setPosition(rect.left - m.offsetX, rect.top - m.offsetY);
 	}
 };
 
@@ -726,9 +745,9 @@ public:
 		sprite.setTextureRect(IntRect(768, 256, 128, 128));
 
 	}
-	void update()
+	void update(MAP &m)
 	{
-		sprite.setPosition(rect.left - offsetX, rect.top - offsetY);
+		sprite.setPosition(rect.left - m.offsetX, rect.top - m.offsetY);
 	}
 };
 
@@ -768,11 +787,11 @@ public:
 		sprite.setTextureRect(IntRect(120, 30, 10, 10));
 		life = true;
 	}
-	void update(float time)
+	void update(float time, MAP &m)
 	{
 		rect.left += dx * time;
 		rect.top += dy * time;
-		sprite.setPosition(rect.left - offsetX, rect.top - offsetY);
+		sprite.setPosition(rect.left - m.offsetX, rect.top - m.offsetY);
 	}
 	void ATTACK(ENEMY &En)
 	{
@@ -798,10 +817,10 @@ public:
 };
 
 
-bool isGameStarted()
+bool isGameStarted(MAP &m)
 {
 	RenderWindow window(VideoMode(1440, 960), "Project!");
-	menu(window, isExit);
+	menu(window, m.isExit);
 	Texture tileSet;
 	tileSet.loadFromFile("tiles_sheet.png");
 	Texture hero;
@@ -828,7 +847,7 @@ bool isGameStarted()
 	SHY[2].set(hero, hero2, 3328, 2048, 0.1, 0);
 	SHY[3].set(hero, hero2, 128, 1216, 0.1, 0);
 	SHY[4].set(hero, hero2, 2176, 1728, 0.1, 0);
-	
+
 	Sprite tile(tileSet);
 
 	FORT A(448, 1600, tileSet);
@@ -901,18 +920,18 @@ bool isGameStarted()
 			}
 		}
 
-		Hero.update(time);
+		Hero.update(time, m);
 		for (int y = 0; y < N; y++)
 		{
-			SH[y].update(time);
+			SH[y].update(time, m);
 		}
 		for (int o = 0; o < K; o++)
 		{
-			SHY[o].update(time);
+			SHY[o].update(time, m);
 		}
 		for (int h = 0; h <= Z; h++)
 		{
-			ptr[h].update(time);
+			ptr[h].update(time, m);
 			ptr[h].ATTACK(A);
 			for (int Y = 0; Y < N; Y++)
 			{
@@ -923,7 +942,7 @@ bool isGameStarted()
 				ptr[h].ATTACK(SHY[Y]);
 			}
 		}
-		
+
 		for (int y = 0; y < N; y++)
 		{
 			isCollide(Hero, SH[y]);
@@ -932,75 +951,75 @@ bool isGameStarted()
 		{
 			isCollide(Hero, SHY[y]);
 		}
-		A.update();
+		A.update(m);
 
-		if (Hero.getrect().left > 500) offsetX = Hero.getrect().left - 500;
-		if (Hero.getrect().top < 2240) offsetY = Hero.getrect().top - 600;
+		if (Hero.getrect().left > 500) m.offsetX = Hero.getrect().left - 500;
+		if (Hero.getrect().top < 2240) m.offsetY = Hero.getrect().top - 600;
 
 		window.clear(Color(107, 140, 255));
 
-		for (int i = 0; i < H; i++)
-			for (int j = 0; j < W; j++)
+		for (int i = 0; i < m.H; i++)
+			for (int j = 0; j < m.W; j++)
 			{
-				if (TileMap[i][j] == 'P')
+				if (m.TileMap[i][j] == 'P')
 					tile.setTextureRect(IntRect(384, 0, 64, 64));
 
-				if (TileMap[i][j] == '1')
+				if (m.TileMap[i][j] == '1')
 					tile.setTextureRect(IntRect(512, 64, 64, 64));
 
-				if (TileMap[i][j] == '2')
+				if (m.TileMap[i][j] == '2')
 					tile.setTextureRect(IntRect(384, 192, 64, 64));
 
-				if (TileMap[i][j] == '3')
+				if (m.TileMap[i][j] == '3')
 					tile.setTextureRect(IntRect(320, 64, 64, 64));
 
-				if (TileMap[i][j] == 'Q')
+				if (m.TileMap[i][j] == 'Q')
 					tile.setTextureRect(IntRect(320, 0, 64, 64));
-				if (TileMap[i][j] == 'W')
+				if (m.TileMap[i][j] == 'W')
 					tile.setTextureRect(IntRect(384, 0, 64, 64));
-				if (TileMap[i][j] == 'E')
+				if (m.TileMap[i][j] == 'E')
 					tile.setTextureRect(IntRect(448, 0, 64, 64));
-				if (TileMap[i][j] == 'R')
+				if (m.TileMap[i][j] == 'R')
 					tile.setTextureRect(IntRect(512, 0, 64, 64));
-				if (TileMap[i][j] == 'q')
+				if (m.TileMap[i][j] == 'q')
 					tile.setTextureRect(IntRect(320, 64, 64, 64));
-				if (TileMap[i][j] == 'w')
+				if (m.TileMap[i][j] == 'w')
 					tile.setTextureRect(IntRect(384, 64, 64, 64));
-				if (TileMap[i][j] == 'e')
+				if (m.TileMap[i][j] == 'e')
 					tile.setTextureRect(IntRect(448, 64, 64, 64));
-				if (TileMap[i][j] == 'r')
+				if (m.TileMap[i][j] == 'r')
 					tile.setTextureRect(IntRect(512, 64, 64, 64));
-				if (TileMap[i][j] == 'A')
+				if (m.TileMap[i][j] == 'A')
 					tile.setTextureRect(IntRect(320, 128, 64, 64));
-				if (TileMap[i][j] == 'S')
+				if (m.TileMap[i][j] == 'S')
 					tile.setTextureRect(IntRect(384, 128, 64, 64));
-				if (TileMap[i][j] == 'D')
+				if (m.TileMap[i][j] == 'D')
 					tile.setTextureRect(IntRect(448, 128, 64, 64));
-				if (TileMap[i][j] == 'F')
+				if (m.TileMap[i][j] == 'F')
 					tile.setTextureRect(IntRect(512, 128, 64, 64));
-				if (TileMap[i][j] == 'a')
+				if (m.TileMap[i][j] == 'a')
 					tile.setTextureRect(IntRect(320, 192, 64, 64));
-				if (TileMap[i][j] == 's')
+				if (m.TileMap[i][j] == 's')
 					tile.setTextureRect(IntRect(384, 192, 64, 64));
-				if (TileMap[i][j] == 'd')
+				if (m.TileMap[i][j] == 'd')
 					tile.setTextureRect(IntRect(448, 192, 64, 64));
-				if (TileMap[i][j] == 'f')
+				if (m.TileMap[i][j] == 'f')
 					tile.setTextureRect(IntRect(512, 192, 64, 64));
-				if (TileMap[i][j] == 'Z')
+				if (m.TileMap[i][j] == 'Z')
 					tile.setTextureRect(IntRect(192, 128, 64, 64));
-				if (TileMap[i][j] == 'z')
+				if (m.TileMap[i][j] == 'z')
 					tile.setTextureRect(IntRect(192, 192, 64, 64));
-				if (TileMap[i][j] == 'X')
+				if (m.TileMap[i][j] == 'X')
 					tile.setTextureRect(IntRect(256, 128, 64, 64));
-				if (TileMap[i][j] == 'x')
+				if (m.TileMap[i][j] == 'x')
 					tile.setTextureRect(IntRect(256, 192, 64, 64));
-				if (TileMap[i][j] == 'M')
+				if (m.TileMap[i][j] == 'M')
 					tile.setTextureRect(IntRect(384, 256, 64, 64));
 
-				if (TileMap[i][j] == ' ')
+				if (m.TileMap[i][j] == ' ')
 					continue;
 
-				tile.setPosition(j * 64 - offsetX, i * 64 - offsetY);
+				tile.setPosition(j * 64 - m.offsetX, i * 64 - m.offsetY);
 				window.draw(tile);
 			}
 		window.draw(Hero.getSprite());
@@ -1018,11 +1037,11 @@ bool isGameStarted()
 			window.draw(ptr[k].getSprite());
 		}
 		window.draw(A.sprite);
-		if (Keyboard::isKeyPressed(Keyboard::Tab) || Hero.getHP() == -1 || ZD == 1)
+		if (Keyboard::isKeyPressed(Keyboard::Tab) || Hero.getHP() == -1 || m.ZD == 1)
 		{
-			offsetX = 0;
-			offsetY = 640;
-			ZD = 0;
+			m.offsetX = 0;
+			m.offsetY = 640;
+			m.ZD = 0;
 			return true;
 		}
 		if (Keyboard::isKeyPressed(Keyboard::Escape))
@@ -1032,18 +1051,19 @@ bool isGameStarted()
 
 }
 
-void GameRunning()
+void GameRunning(MAP &m)
 {
-	if (isGameStarted() && !isExit)
+	if (isGameStarted(m) && !m.isExit)
 	{
-		offsetX = 0;
-		offsetY = 640;
-		GameRunning();
+		m.offsetX = 0;
+		m.offsetY = 640;
+		GameRunning(m);
 	}
 }
 
 int main()
 {
-	GameRunning();
+	MAP m;
+	GameRunning(m);
 	return 0;
 }
