@@ -5,6 +5,7 @@
 #include "GREEN.h"
 #include "FORT.h"
 #include "JADRO.h"
+#include <fstream>
 void menu(RenderWindow & window, bool &exit)
 {
 	Texture menuTexture1, menuTexture3, aboutTexture, menuBackground;
@@ -322,6 +323,26 @@ void GameRunning(MAP &m)
 int main()
 {
 	MAP m;
+	
+	/*char buff[40][150];
+	std::ifstream fin("D:\\cppstudio.txt");
+	for(int k = 0; k<40; k++)
+	{
+	fin.getline(buff[k], 150); 
+	fin.close();
+	}
+	fin.close();
+	for(int t = 0; t< 40; t++)
+	{
+		for (int y = 0; y < 150; y++)
+		{
+			m.TileMap[t][y] = buff[t][y];
+		}
+	}*/
+	
+	
+	
+
 	GameRunning(m);
 	return 0;
 }
